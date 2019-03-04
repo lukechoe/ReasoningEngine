@@ -1,5 +1,6 @@
 from important_objects import *
 from util import *
+import re
 
 class KnowledgeBase(object):
 
@@ -15,7 +16,32 @@ class KnowledgeBase(object):
     def ask(self, statement):
         binding_lst = []
 
-        
+        statement = statement.strip().replace("(","").replace(")","")
+        elements = statement.split()
+
+        pred = elements[0]
+        terms = elements[1:]
+
+        for f in self.facts:
+            lst_of_vars = []
+            lst_of_const = []
+            isComplete = True
+            if f.predicate == pred and len(f.terms) == len(terms):
+                for i in range(len(f.terms)):
+                    if terms[i][0] == '?':
+                        lst_of_vars.append(terms[i])
+                        lst_of_const.append(f.terms[i])
+                    else:
+                        if terms[i] != f.terms[i]:
+                            isComplete = False
+                if isComplete == True:
+                    print("WHOOOO")
+                    print(len(lst_of_vars), '000', len(lst_of_const))
+                    print(lst_of_vars[0], '---', lst_of_const[0])
+                    # do stuff with lst of vars
+
+
+
         return binding_lst
 
     # add and infer new facts/rules
