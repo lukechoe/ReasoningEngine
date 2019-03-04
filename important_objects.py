@@ -1,7 +1,7 @@
 
 
 class Fact(object):
-    def __init__(self, data, back_support=[], label="TRUE"):
+    def __init__(self, data, back_support=[], label="IN"):
         super(Fact, self).__init__()
         self.id = "Fact"
         self.label = label
@@ -16,19 +16,22 @@ class Fact(object):
 
     def __repr__(self):
         #s = "Fact: %s\n %s\n\n %s\n" % (self.label, self.predicate, self.terms)
-        s = "Fact: %s %s\n" % (self.predicate, self.terms[0])
+        s = "Fact: PRED: %s \nTERMS: %s\n" % (self.predicate, self.terms[0])
         return s
 
 class Rule(object):
-    def __init__(self, predicate, vars, asserteded, back_support=[], label="TRUE"):
+    def __init__(self, data, asserted, back_support=[], label="IN"):
         super(Rule, self).__init__()
         self.id = "Rule"
         self.label = label
 
-        # rule: (<predicate> <vars> <vars>, <predicate> <vars> <vars> ==> <asserted>)
-        self.predicate = predicate
-        self.vars = vars
-        self.asserted = asserteded
+        # data is a 2D array, each list is a rule
+        self.rule_list = data
+
+        # rule: (<predicate> <vars> <vars>, <predicate> <vars> <vars> ==> <asserted>) in a list
+        self.predicate = [item[0] for item in self.rule_list]
+        self.vars = [item[1:] for item in self.rule_list]
+        self.asserted = asserted
 
         self.back_support = back_support
         self.forward_support = []
@@ -36,12 +39,21 @@ class Rule(object):
     def __eq__(self, next):
         return self.predicate == next.predicate and self.vars == next.vars and self.asserted == next.asserted and isinstance(next, Rule)
     def __repr__(self):
-        s = "Rule: %s\n %s\n\n %s\n %s\n" % (self.label, self.predicate, self.vars, self.asserted)
+        s = "Rule: %s\n PRED: %s\n VARS: %s\n ASSERT: %s\n\n" % (self.label, self.predicate, self.vars, self.asserted)
         return s
 
-# Duo is a pair of fact and rule that support another fact or rule
-class Duo(object):
-    def _init__(self, f, r):
-        super(Duo, self).__init__()
+# Justification is a pair of fact and rule that support another fact or rule
+class Justification(object):
+    def __init__(self, f, r):
+        super(Justification, self).__init__()
         self.fact = f
         self.rule = r
+
+class Binding(object):
+    def __init__(self, var, constant):
+        super(Binding, self).__init__()
+        self.var = var
+        self.constant = constant
+    def __repr__(self):
+        s = "Binding:\n %s\n%s\n\n" % (self.var, self.constant)
+        return s

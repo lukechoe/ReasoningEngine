@@ -10,9 +10,12 @@ class MyTests(unittest.TestCase):
         file = 'data.txt'
         data = tokenize_file(file)
 
+        # takes in data from txt file and asserts and makes inferences
         classify(self.kb, data)
 
-    
+        
+
+
 
 
 

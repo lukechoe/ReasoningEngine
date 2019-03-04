@@ -16,9 +16,12 @@ Rectangular3DShape)
   (rule (on ?y ?x)
     (rule (on ?z ?y) (assert! '(3-Tower ,?x ,?y ,?z)))))
 
+(rule (on ?x table)
+  (assert! '(isa ?x testing)))
+
 (ON D TABLE)
 (ON E D)
-(ON F E) 
+(ON F E)
 
 # Other random facts
 
