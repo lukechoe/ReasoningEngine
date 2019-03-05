@@ -38,7 +38,7 @@ def tokenize_file(file):
             result.append(tmp_lst)
             tmp_lst = []
     if left_parens != right_parens:
-        print("Wrong formatting")
+        raise ValueError()
 
     file.close()
     return result

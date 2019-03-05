@@ -35,14 +35,16 @@ class KnowledgeBase(object):
                         if terms[i] != f.terms[i]:
                             isComplete = False
                 if isComplete == True:
-                    print("WHOOOO")
-                    print(len(lst_of_vars), '000', len(lst_of_const))
-                    print(lst_of_vars[0], '---', lst_of_const[0])
-                    # do stuff with lst of vars
-
-
+                    if len(lst_of_vars) != len(lst_of_const):
+                        print("Error with bindings")
+                        return False
+                    for i in range(len(lst_of_vars)):
+                        binding_lst.append(Binding(lst_of_vars[i], lst_of_const[i]))
+        if len(binding_lst) == 0:
+            return False
 
         return binding_lst
+
 
     # add and infer new facts/rules
     def add(self, statement):
@@ -51,14 +53,17 @@ class KnowledgeBase(object):
             if statement in self.facts:
                 print("Already asserted (fact)")
                 return False
-            self.make_inferences(statement)
+
             self.facts.append(statement)
+            
+
         if isinstance(statement, Rule):
             if statement in self.rules:
                 print("Already asserted (rule)")
                 return False
-            self.make_inferences(statement)
+
             self.rules.append(statement)
+
 
     # use "in" and "out"
     def make_inferences(self, statement):

@@ -1,0 +1,13 @@
+#Random facts and rules for initial testing
+
+(isa luke human)
+(on block1 block2      )
+(populationOfRegion Honduras ((UnitOfCountFn HomoSapiens) 6560608))
+
+(rule (on ?x table)
+  (rule (on ?y ?x)
+    (rule (on ?z ?y) (assert! '(3-Tower ,?x ,?y ,?z)))))
+
+
+(rule (on ?x table)
+  (assert! '(isa ?x testing)))
