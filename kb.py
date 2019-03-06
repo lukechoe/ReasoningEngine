@@ -11,8 +11,8 @@ class KnowledgeBase(object):
     def __repr__(self):
         return 'KnowledgeBase {!r}, {!r}'.format(self.facts, self.rules)
 
-    # returns list of bindings if there exists match(es)
-    # input statement format is (on ?X table)
+    # returns LIST OF BINDINGS if there exists match(es) in FACTS ONLY
+    # input statement format is e.g. (on ?X table) ==> returns (?X, Block1)
     def ask(self, statement):
         binding_lst = []
 
@@ -27,22 +27,30 @@ class KnowledgeBase(object):
             lst_of_const = []
             isComplete = True
             if f.predicate == pred and len(f.terms) == len(terms):
+                num_of_vars = 0
                 for i in range(len(f.terms)):
                     if terms[i][0] == '?':
+                        num_of_vars += 1
                         lst_of_vars.append(terms[i])
                         lst_of_const.append(f.terms[i])
                     else:
                         if terms[i] != f.terms[i]:
                             isComplete = False
+                #print(num_of_vars,'::', len(f.terms))
                 if isComplete == True:
                     if len(lst_of_vars) != len(lst_of_const):
                         print("Error with bindings")
                         return False
-                    for i in range(len(lst_of_vars)):
-                        binding_lst.append(Binding(lst_of_vars[i], lst_of_const[i]))
+                    num_of_bindings = len(lst_of_vars)/num_of_vars
+                    for i in range(int(num_of_bindings)):
+                        one_binding_vars = []
+                        one_binding_const = []
+                        for j in range(num_of_vars):
+                            one_binding_vars.append(lst_of_vars[j])
+                            one_binding_const.append(lst_of_const[j])
+                        binding_lst.append(Binding(one_binding_vars, one_binding_const))
         if len(binding_lst) == 0:
             return False
-
         return binding_lst
 
 
@@ -55,7 +63,9 @@ class KnowledgeBase(object):
                 return False
 
             self.facts.append(statement)
-            
+            for r in self.rules:
+                #todo
+                pass
 
         if isinstance(statement, Rule):
             if statement in self.rules:

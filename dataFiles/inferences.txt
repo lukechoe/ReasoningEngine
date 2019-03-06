@@ -1,0 +1,3 @@
+(isa luke human)
+(rule (isa ?x human)
+  (assert! '(isa ?x mortal)))

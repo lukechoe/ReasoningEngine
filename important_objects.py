@@ -50,10 +50,10 @@ class Justification(object):
         self.rule = r
 
 class Binding(object):
-    def __init__(self, var, constant):
+    def __init__(self, vars, constants):
         super(Binding, self).__init__()
-        self.var = var
-        self.constant = constant
+        self.vars = vars
+        self.constants = constants
     def __repr__(self):
         s = "Binding:\n %s\n%s\n\n" % (self.var, self.constant)
         return s

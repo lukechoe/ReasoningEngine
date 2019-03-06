@@ -64,33 +64,27 @@ class MyTests(unittest.TestCase):
         b2 = self.kb.ask("(populationOfRegion ?Y ((UnitOfCountFn HomoSapiens) 6560608))")
         b3 = self.kb.ask("(relationAllInstance outerRadius AutomobileTire (?Z 0.5 0.9))")
 
-        self.assertEqual(b1[0].var, "?X")
-        self.assertEqual(b1[0].constant, "D")
+        self.assertEqual(b1[0].vars[0], "?X")
+        self.assertEqual(b1[0].constants[0], "D")
 
-        self.assertEqual(b2[0].var, "?Y")
-        self.assertEqual(b2[0].constant, "Honduras")
+        self.assertEqual(b2[0].vars[0], "?Y")
+        self.assertEqual(b2[0].constants[0], "Honduras")
 
-        self.assertEqual(b3[0].var, "?Z")
-        self.assertEqual(b3[0].constant, "Meter")
+        self.assertEqual(b3[0].vars[0], "?Z")
+        self.assertEqual(b3[0].constants[0], "Meter")
 
 
         b4 = self.kb.ask("(ON ?first ?second)")
-        self.assertEqual(b4[0].var, "?first")
-        self.assertEqual(b4[0].constant, "D")
-        self.assertEqual(b4[1].var, "?second")
-        self.assertEqual(b4[1].constant, "TABLE")
 
-        self.assertEqual(b4[2].var, "?first")
-        self.assertEqual(b4[2].constant, "E")
-        self.assertEqual(b4[3].var, "?second")
-        self.assertEqual(b4[3].constant, "D")
+        self.assertEqual(b4[0].vars, ["?first", "?second"])
+        self.assertEqual(b4[0].constants, ["D", "TABLE"])
 
-        self.assertEqual(b4[4].var, "?first")
-        self.assertEqual(b4[4].constant, "F")
-        self.assertEqual(b4[5].var, "?second")
-        self.assertEqual(b4[5].constant, "E")
+        self.assertEqual(b4[1].vars, ["?first", "?second"])
+        self.assertEqual(b4[1].constants, ["E", "D"])
 
-        self.assertEqual(len(b4), 6)
+        self.assertEqual(b4[2].vars, ["?first", "?second"])
+        self.assertEqual(b4[2].constants, ["F", "E"])
+        self.assertEqual(len(b4), 3)
 
     # This tests to see if the proper inferences were able to be made
     def test04(self):
