@@ -30,8 +30,3 @@ def classify(kb, data):
 
         else: # gonna be a fact
             kb.add(Fact(element))
-
-#returns bindings if a fact and rule satisfy one another, if not return false
-def find_bindings(kb, fact, rule):
-    for i in range(len(rule.predicate)):
-        pass

@@ -53,8 +53,12 @@ class KnowledgeBase(object):
             return False
         return binding_lst
 
+    # this returns a LIST OF BINDINGS if there exists a fact that satisfies a FULL rule
+    # Input: (on block1 table) ==> returns (?X, Block1) assuming there is the rule: (rule (on ?X table) (assert! ... ))
+    def find_bindings_fact(self, statement):
+        pass
 
-    # add and infer new facts/rules
+    # add and infer new facts/rules ... uses "ask()" and "helper()"
     def add(self, statement):
         if isinstance(statement, Fact):
             # check for duplicates
