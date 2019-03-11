@@ -16,7 +16,10 @@ class Fact(object):
 
     def __repr__(self):
         #s = "Fact: %s\n %s\n\n %s\n" % (self.label, self.predicate, self.terms)
-        s = "Fact: PRED: %s \nTERMS: %s\n" % (self.predicate, self.terms[0])
+        lst = []
+        for e in self.terms:
+            lst.append(e)
+        s = "Fact: PRED: %s \nTERMS: %s\n" % (self.predicate, str(lst))
         return s
 
 class Rule(object):
@@ -55,5 +58,5 @@ class Binding(object):
         self.vars = vars
         self.constants = constants
     def __repr__(self):
-        s = "Binding:\n %s\n%s\n\n" % (self.var, self.constant)
+        s = "Binding:\n %s\n%s\n\n" % (self.vars, self.constants)
         return s

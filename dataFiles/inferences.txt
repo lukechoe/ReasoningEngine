@@ -1,3 +1,21 @@
 (isa luke human)
 (rule (isa ?x human)
   (assert! '(isa ?x mortal)))
+
+
+(rule (ON ?x TABLE)
+  (rule (ON ?y ?x)
+    (rule (ON ?z ?y) (assert! '(3-Tower ,?x ,?y ,?z)))))
+
+(rule (ON ?x TABLE)
+  (assert! '(isa ?x testing)))
+
+(rule (isa ?x ?y)
+  (assert! '(happy ?x ?y)))
+
+(rule (happy ?x mortal)
+  (assert! '(recursive test worked)))
+
+(ON D TABLE)
+(ON E D)
+(ON F E)

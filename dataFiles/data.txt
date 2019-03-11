@@ -12,11 +12,11 @@ Rectangular3DShape)
 (widthOfObject CS381ClassRoom (Meter 10))
 (radius Popcorn (Inch 0.25))
 
-(rule (on ?x table)
-  (rule (on ?y ?x)
-    (rule (on ?z ?y) (assert! '(3-Tower ,?x ,?y ,?z)))))
+(rule (ON ?x TABLE)
+  (rule (ON ?y ?x)
+    (rule (ON ?z ?y) (assert! '(3-Tower ,?x ,?y ,?z)))))
 
-(rule (on ?x table)
+(rule (ON ?x TABLE)
   (assert! '(isa ?x testing)))
 
 (ON D TABLE)

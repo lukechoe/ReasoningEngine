@@ -16,6 +16,7 @@ class KnowledgeBase(object):
     def ask(self, statement):
         binding_lst = []
 
+
         statement = statement.strip().replace("(","").replace(")","")
         elements = statement.split()
 
@@ -55,8 +56,23 @@ class KnowledgeBase(object):
 
     # this returns a LIST OF BINDINGS if there exists a fact that satisfies a FULL rule
     # Input: (on block1 table) ==> returns (?X, Block1) assuming there is the rule: (rule (on ?X table) (assert! ... ))
-    def find_bindings_fact(self, statement):
-        pass
+    def reverse_ask(self, statement):
+        binding_lst = []
+
+        statement = statement.strip().replace("(","").replace(")","")
+        elements = statement.split()
+
+        pred = elements[0]
+        terms = elements[1:]
+
+
+        #for r in self.rules:
+            #for i in range(len(r.predicate)):
+                # this is why i should've organized the objects...
+                # now i gotta iterate through the list of predicates AND vars... -_-
+                #if r.predicate[i] == pred:
+                #    print(pred, '000')
+            #print('break;')
 
     # add and infer new facts/rules ... uses "ask()" and "helper()"
     def add(self, statement):
@@ -66,7 +82,9 @@ class KnowledgeBase(object):
                 print("Already asserted (fact)")
                 return False
 
+            #self.make_inferences(statement)
             self.facts.append(statement)
+
             for r in self.rules:
                 #todo
                 pass
@@ -75,8 +93,18 @@ class KnowledgeBase(object):
             if statement in self.rules:
                 print("Already asserted (rule)")
                 return False
-
+            #self.make_inferences(statement)
             self.rules.append(statement)
+
+    # given a fact, infer any new facts/rules
+    def infer_with_fact(self, statement):
+
+        for r in self.rules:
+            for i in range(len(r.predicate)):
+                # kb ask... right here.. translate rule into string format..
+                # IMPORTANT somehow check to see if there are multiple results
+                # that a "kb ask()" returns. Since there can be multiple bindings for ?X
+                    print(r.predicate[i])
 
 
     # use "in" and "out"
@@ -85,7 +113,21 @@ class KnowledgeBase(object):
         bindings = []
         if isinstance(statement, Fact):
             for rule in self.rules:
-                bindings = find_bindings(self, statement, rule)
+                if len(rule.predicate) == 1 and rule.predicate[0] == statement.predicate:
+                    b = self.find_bindings(statement, rule)
+                    if b == False:
+                        continue
+                    new_assert = self.update_rest_of_rule(rule.asserted, b)
+                    justification = Justification(statement, rule)
+                    new_assert = Fact(new_assert, justification)
+                    self.add(new_assert)
+                    self.make_inferences(new_assert)
+                    # todo check back_support and implement forward support
+
+
+                # more than one predicate...todo
+                else:
+                    pass
         elif isinstance(statement, Rule):
             for fact in self.facts:
                 bindings = find_bindings(self, fact, statement)
@@ -93,8 +135,35 @@ class KnowledgeBase(object):
             print("incorrect input type (make_inferences)")
             return False
 
+    # returns a list of bindings for a given fact/rule pair. returns false if
+    # there is no pattern matched
+    def find_bindings(self, fact, rule):
+        vars = []
+        constants = []
+        for i in range(len(rule.vars[0])):
+            if rule.vars[0][i][0] == '?':
+                vars.append(rule.vars[0][i])
+                constants.append(fact.terms[i])
+                #print(rule.vars[0][i], '---', fact.terms[i])
+            else:
+                if rule.vars[0][i] != fact.terms[i]:
+                    return False
+        return Binding(vars, constants)
 
+    # takes the rest of a rule (could have more predicates and vars,
+    # or it could just be the asserted)
+    def update_rest_of_rule(self, rest_of_rule, binding):
+        #print(len(binding.vars), '---')
+        if isinstance(rest_of_rule, Rule):
+            pass # todo this
+        # this is just the asserted (hopefully)
+        else:
 
+            for i in range(len(binding.vars)):
+                for j in range(len(rest_of_rule)):
+                    if rest_of_rule[j] == binding.vars[i]:
+                        rest_of_rule[j] = binding.constants[i]
+        return rest_of_rule
 
     def make_retractions(self, statement):
         pass

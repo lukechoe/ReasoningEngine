@@ -86,12 +86,44 @@ class MyTests(unittest.TestCase):
         self.assertEqual(b4[2].constants, ["F", "E"])
         self.assertEqual(len(b4), 3)
 
-    # This tests to see if the proper inferences were able to be made
+        b5 = self.kb.ask("(this_does_not_exist ?x ?y)")
+        self.assertFalse(b5)
+
+
+    """ MAY NOT NEED THIS ONE"""
+    # This tests the functionality of reverse_ask()
+    # this also returns bindings but the input is a fact rather than a rule
     def test04(self):
+        self.kb = KnowledgeBase()
+        file = 'dataFiles/data.txt'
+        data = tokenize_file(file)
+
+        classify(self.kb, data)
+        b1 = self.kb.reverse_ask("(ON D TABLE)")
+        #self.assertEqual(b1[0].vars[0], "?X")
+        #self.assertEqual(b1[0].constants[0], "D")
+
+
+    # This tests to see if the proper inferences were able to be made given a fact
+    def test05(self):
         self.kb = KnowledgeBase()
         file = 'dataFiles/inferences.txt'
         data = tokenize_file(file)
         classify(self.kb, data)
+
+        check = False
+        self.kb.make_inferences(Fact(['isa', 'dave', 'human']))
+        expected1 = Fact(['isa', 'dave', 'mortal'])
+        expected2 = Fact(['happy', 'dave', 'mortal'])
+        expected3 = Fact(['recursive', 'test', 'worked'])
+        #print(expected1)
+        if expected1 in self.kb.facts and expected2 in self.kb.facts and expected3 in self.kb.facts:
+            check = True
+        #self.assertEqual(check, True)
+
+
+        for e in self.kb.facts:
+            print(e)
 
 
 if __name__ == '__main__':
