@@ -82,8 +82,9 @@ class KnowledgeBase(object):
                 print("Already asserted (fact)")
                 return False
 
-            #self.make_inferences(statement)
+
             self.facts.append(statement)
+            self.make_inferences(statement)
 
             for r in self.rules:
                 #todo
@@ -95,16 +96,7 @@ class KnowledgeBase(object):
                 return False
             #self.make_inferences(statement)
             self.rules.append(statement)
-
-    # given a fact, infer any new facts/rules
-    def infer_with_fact(self, statement):
-
-        for r in self.rules:
-            for i in range(len(r.predicate)):
-                # kb ask... right here.. translate rule into string format..
-                # IMPORTANT somehow check to see if there are multiple results
-                # that a "kb ask()" returns. Since there can be multiple bindings for ?X
-                    print(r.predicate[i])
+            self.make_inferences(statement)
 
 
     # use "in" and "out"
@@ -112,7 +104,11 @@ class KnowledgeBase(object):
         # list of bindings below..
         bindings = []
         if isinstance(statement, Fact):
+            if statement in self.facts:
+                #print("already there.. fix it")
+                pass
             for rule in self.rules:
+                print(rule, '--\n', statement, '=============\n')
                 if len(rule.predicate) == 1 and rule.predicate[0] == statement.predicate:
                     b = self.find_bindings(statement, rule)
                     if b == False:
@@ -120,17 +116,19 @@ class KnowledgeBase(object):
                     new_assert = self.update_rest_of_rule(rule.asserted, b)
                     justification = Justification(statement, rule)
                     new_assert = Fact(new_assert, justification)
-                    self.add(new_assert)
+                    #self.add(new_assert)
+                    self.facts.append(new_assert)
+                    print("asserted", new_assert, '--------\n')
                     self.make_inferences(new_assert)
                     # todo check back_support and implement forward support
-
 
                 # more than one predicate...todo
                 else:
                     pass
+            return
         elif isinstance(statement, Rule):
             for fact in self.facts:
-                bindings = find_bindings(self, fact, statement)
+                bindings = self.find_bindings(fact, statement)
         else:
             print("incorrect input type (make_inferences)")
             return False
@@ -158,12 +156,13 @@ class KnowledgeBase(object):
             pass # todo this
         # this is just the asserted (hopefully)
         else:
-
+            # WHY DOES PYTHON COPY THE REFERENCE TO THE LIST INSTEAD OF CREATING A NEW LIST!???
+            new_rule = rest_of_rule.copy()
             for i in range(len(binding.vars)):
-                for j in range(len(rest_of_rule)):
-                    if rest_of_rule[j] == binding.vars[i]:
-                        rest_of_rule[j] = binding.constants[i]
-        return rest_of_rule
+                for j in range(len(new_rule)):
+                    if new_rule[j] == binding.vars[i]:
+                        new_rule[j] = binding.constants[i]
+        return new_rule
 
     def make_retractions(self, statement):
         pass

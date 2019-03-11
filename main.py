@@ -112,18 +112,15 @@ class MyTests(unittest.TestCase):
         classify(self.kb, data)
 
         check = False
-        self.kb.make_inferences(Fact(['isa', 'dave', 'human']))
+        self.kb.add(Fact(['isa', 'dave', 'human']))
         expected1 = Fact(['isa', 'dave', 'mortal'])
         expected2 = Fact(['happy', 'dave', 'mortal'])
-        expected3 = Fact(['recursive', 'test', 'worked'])
-        #print(expected1)
+        expected3 = Fact(['recursive', 'test', 'dave'])
+        print(expected1)
         if expected1 in self.kb.facts and expected2 in self.kb.facts and expected3 in self.kb.facts:
             check = True
-        #self.assertEqual(check, True)
+        self.assertEqual(check, True)
 
-
-        for e in self.kb.facts:
-            print(e)
 
 
 if __name__ == '__main__':

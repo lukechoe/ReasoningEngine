@@ -19,7 +19,7 @@ class Fact(object):
         lst = []
         for e in self.terms:
             lst.append(e)
-        s = "Fact: PRED: %s \nTERMS: %s\n" % (self.predicate, str(lst))
+        s = "Fact: \nPRED: %s \nTERMS: %s\n" % (self.predicate, str(lst))
         return s
 
 class Rule(object):
