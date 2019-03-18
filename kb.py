@@ -1,6 +1,7 @@
 from important_objects import *
 from util import *
 import re
+import copy
 
 class KnowledgeBase(object):
 
@@ -16,12 +17,12 @@ class KnowledgeBase(object):
     def ask(self, statement):
         binding_lst = []
 
+        if not isinstance(statement, list):
+            statement = statement.strip().replace("(","").replace(")","")
+            statement = statement.split()
 
-        statement = statement.strip().replace("(","").replace(")","")
-        elements = statement.split()
-
-        pred = elements[0]
-        terms = elements[1:]
+        pred = statement[0]
+        terms = statement[1:]
 
         for f in self.facts:
             lst_of_vars = []
@@ -108,7 +109,7 @@ class KnowledgeBase(object):
                 #print("already there.. fix it")
                 pass
             for rule in self.rules:
-                print(rule, '--\n', statement, '=============\n')
+                #print(rule, '--\n', statement, '=============\n')
                 if len(rule.predicate) == 1 and rule.predicate[0] == statement.predicate:
                     b = self.find_bindings(statement, rule)
                     if b == False:
@@ -118,7 +119,7 @@ class KnowledgeBase(object):
                     new_assert = Fact(new_assert, justification)
                     #self.add(new_assert)
                     self.facts.append(new_assert)
-                    print("asserted", new_assert, '--------\n')
+                    #print("asserted", new_assert, '--------\n')
                     self.make_inferences(new_assert)
                     # todo check back_support and implement forward support
 
@@ -127,8 +128,42 @@ class KnowledgeBase(object):
                     pass
             return
         elif isinstance(statement, Rule):
-            for fact in self.facts:
-                bindings = self.find_bindings(fact, statement)
+            binding_lst = []
+
+            """ logic for how to do rules:
+
+            if there is one predicate and
+            there is a match, then the "assert" can be added to the KB.
+
+            if there is more than one, only check the very first and assert
+            a new rule
+            """
+
+            check = False # if this is true by the end of the for loop, then we found a match
+            #print(statement)
+            for f in self.facts:
+                if len(statement.predicate) == 1 and statement.predicate[0] == f.predicate:
+                    b = self.find_bindings(f, statement)
+                    if b == False:
+                        continue
+
+                    new_assert = self.update_rest_of_rule(statement.asserted, b)
+                    justification = Justification(f, statement)
+                    new_assert = Fact(new_assert, justification)
+                    self.facts.append(new_assert)
+
+                elif len(statement.predicate) > 1 and statement.predicate[0] == f.predicate:
+                    b = self.find_bindings(f, statement)
+                    if b == False:
+                        continue
+                    new_rule = copy.copy(statement)
+                    new_rule.predicate = new_rule.predicate[1:]
+                    new_rule.vars = new_rule.vars[1:]
+                    new_assert = self.update_rest_of_rule(new_rule, b)
+                    print(new_assert)
+
+            return
+
         else:
             print("incorrect input type (make_inferences)")
             return False
@@ -151,10 +186,14 @@ class KnowledgeBase(object):
     # takes the rest of a rule (could have more predicates and vars,
     # or it could just be the asserted)
     def update_rest_of_rule(self, rest_of_rule, binding):
-        #print(len(binding.vars), '---')
+
+        # this assumes the left hand side of a rule has more than one predicate
+        # therefore, it takes the rest of the rule, and returns a new rule
         if isinstance(rest_of_rule, Rule):
-            pass # todo this
-        # this is just the asserted (hopefully)
+            print("UH OH TODO")
+            new_rule = []
+
+        # this assumes the left hand side of a rule has only one predicate.
         else:
             # WHY DOES PYTHON COPY THE REFERENCE TO THE LIST INSTEAD OF CREATING A NEW LIST!???
             new_rule = rest_of_rule.copy()

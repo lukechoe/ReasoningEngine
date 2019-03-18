@@ -114,9 +114,9 @@ class MyTests(unittest.TestCase):
         check = False
         self.kb.add(Fact(['isa', 'dave', 'human']))
         expected1 = Fact(['isa', 'dave', 'mortal'])
-        expected2 = Fact(['happy', 'dave', 'mortal'])
-        expected3 = Fact(['recursive', 'test', 'dave'])
-        print(expected1)
+        expected2 = Fact(['happy', 'dave'])
+        expected3 = Fact(['perfect', 'dave'])
+        #print(expected1)
         if expected1 in self.kb.facts and expected2 in self.kb.facts and expected3 in self.kb.facts:
             check = True
         self.assertEqual(check, True)

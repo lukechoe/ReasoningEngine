@@ -1,22 +1,17 @@
+(isa luke human)
 
 (rule (isa ?x human)
   (assert! '(isa ?x mortal)))
 
-#(rule (ON ?x TABLE)
-#  (rule (ON ?y ?x)
-#    (rule (ON ?z ?y) (assert! '(3-Tower ,?x ,?y ,?z)))))
+(rule (isa ?x mortal)
+  (assert! '(happy ?x)))
 
-(rule (ON ?x TABLE)
-  (assert! '(isa ?x testing)))
+(rule (happy ?x)
+  (assert! '(perfect ?x)))
 
-(rule (isa ?x ?y)
-  (assert! '(happy ?x ?y)))
+(test one two)
+(test two three)
 
-(rule (happy ?x mortal)
-  (assert! '(recursive test ?x)))
-
-(ON D TABLE)
-(ON E D)
-(ON F E)
-
-(isa luke human)
+(rule (test ?x ?y)
+  (rule (test ?y ?z)
+    (assert! '(madeIt ?x ?z))))

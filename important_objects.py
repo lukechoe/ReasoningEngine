@@ -1,15 +1,15 @@
 
 
 class Fact(object):
-    def __init__(self, data, back_support=[], label="IN"):
+    def __init__(self, data, justification=[], label="IN"):
         super(Fact, self).__init__()
         self.id = "Fact"
         self.label = label
         self.predicate = data[0]
         self.terms = data[1:]
 
-        self.back_support = back_support
-        self.forward_support = []
+        self.justification = justification
+        self.supports = []
 
     def __eq__(self, next):
         return self.predicate == next.predicate and self.terms == next.terms and isinstance(next, Fact)
