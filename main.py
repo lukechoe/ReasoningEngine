@@ -121,6 +121,9 @@ class MyTests(unittest.TestCase):
             check = True
         self.assertEqual(check, True)
 
+        print('EEEEEEE')
+        for e in self.kb.facts:
+            print(e)
 
 
 if __name__ == '__main__':

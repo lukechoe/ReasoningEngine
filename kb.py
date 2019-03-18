@@ -2,6 +2,7 @@ from important_objects import *
 from util import *
 import re
 import copy
+from copy import deepcopy
 
 class KnowledgeBase(object):
 
@@ -124,9 +125,14 @@ class KnowledgeBase(object):
                     # todo check back_support and implement forward support
 
                 # more than one predicate...todo
-                else:
-                    pass
+                elif len(rule.predicate) > 1 and rule.predicate[0] == statement.predicate:
+                    b = self.find_bindings(statement, rule)
+                    if b == False:
+                        continue
+                    #new_rule = self.update_rest_of_rule(statement, b)
+                    # todoooooooo
             return
+
         elif isinstance(statement, Rule):
             binding_lst = []
 
@@ -151,17 +157,17 @@ class KnowledgeBase(object):
                     justification = Justification(f, statement)
                     new_assert = Fact(new_assert, justification)
                     self.facts.append(new_assert)
+                    self.make_inferences(new_assert)
 
                 elif len(statement.predicate) > 1 and statement.predicate[0] == f.predicate:
                     b = self.find_bindings(f, statement)
                     if b == False:
                         continue
-                    new_rule = copy.copy(statement)
-                    new_rule.predicate = new_rule.predicate[1:]
-                    new_rule.vars = new_rule.vars[1:]
-                    new_assert = self.update_rest_of_rule(new_rule, b)
-                    print(new_assert)
-
+                    new_rule = self.update_rest_of_rule(statement, b)
+                    justification = Justification(f, statement)
+                    new_rule.justification = justification
+                    self.rules.append(new_rule)
+                    self.make_inferences(new_rule)
             return
 
         else:
@@ -190,10 +196,23 @@ class KnowledgeBase(object):
         # this assumes the left hand side of a rule has more than one predicate
         # therefore, it takes the rest of the rule, and returns a new rule
         if isinstance(rest_of_rule, Rule):
-            print("UH OH TODO")
-            new_rule = []
+            new_rule = deepcopy(rest_of_rule)
+            #print(rest_of_rule)
+            new_rule.predicate = new_rule.predicate[1:]
+            new_rule.vars = new_rule.vars[1:]
+            # do rest of left hand side
+            for i in range(len(binding.vars)):
+                for j in range(len(new_rule.vars)):
+                    for k in range(len(new_rule.vars[j])):
+                        if new_rule.vars[j][k] == binding.vars[i]:
+                            new_rule.vars[j][k] = binding.constants[i]
+            # do right hand side (assert)
+                for j in range(len(rest_of_rule.asserted)):
+                    if new_rule.asserted[j] == binding.vars[i]:
+                        new_rule.asserted[j] = binding.constants[i]
 
-        # this assumes the left hand side of a rule has only one predicate.
+            return new_rule
+        # this assumes the left hand side of a rule has only one predicate. and returns a new fact
         else:
             # WHY DOES PYTHON COPY THE REFERENCE TO THE LIST INSTEAD OF CREATING A NEW LIST!???
             new_rule = rest_of_rule.copy()

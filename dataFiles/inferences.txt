@@ -9,9 +9,9 @@
 (rule (happy ?x)
   (assert! '(perfect ?x)))
 
-(test one two)
-(test two three)
-
 (rule (test ?x ?y)
   (rule (test ?y ?z)
     (assert! '(madeIt ?x ?z))))
+
+(test one two)
+(test two three)
