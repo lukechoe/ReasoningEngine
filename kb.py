@@ -129,8 +129,11 @@ class KnowledgeBase(object):
                     b = self.find_bindings(statement, rule)
                     if b == False:
                         continue
-                    #new_rule = self.update_rest_of_rule(statement, b)
-                    # todoooooooo
+                    new_rule = self.update_rest_of_rule(rule, b)
+                    justification = Justification(statement, rule)
+                    new_rule.justification = justification
+                    self.rules.append(new_rule)
+                    self.make_inferences(new_rule)
             return
 
         elif isinstance(statement, Rule):
