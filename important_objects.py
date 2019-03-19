@@ -40,7 +40,7 @@ class Rule(object):
         self.forward_support = []
 
     def __eq__(self, next):
-        return self.predicate == next.predicate and self.vars == next.vars and self.asserted == next.asserted and isinstance(next, Rule)
+        return isinstance(next, Rule) and self.predicate == next.predicate and self.vars == next.vars and self.asserted == next.asserted
     def __repr__(self):
         s = "Rule: %s\n PRED: %s\n VARS: %s\n ASSERT: %s\n\n" % (self.label, self.predicate, self.vars, self.asserted)
         return s

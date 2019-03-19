@@ -9,9 +9,9 @@
 (rule (happy ?x)
   (assert! '(perfect ?x)))
 
-(rule (test ?x ?y)
-  (rule (test ?y ?z)
-    (assert! '(madeIt ?x ?z))))
+(rule (above ?x ?y)
+  (rule (above ?y ?z)
+    (assert! '(above ?x ?z))))
 
-(test one two)
-(test two three)
+(above block1 block2)
+(above block2 block3)

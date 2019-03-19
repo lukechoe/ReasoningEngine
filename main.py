@@ -111,6 +111,25 @@ class MyTests(unittest.TestCase):
         data = tokenize_file(file)
         classify(self.kb, data)
 
+        expected1 = Fact(['isa', 'luke', 'mortal'])
+        expected2 = Fact(['happy', 'luke'])
+        expected3 = Fact(['perfect', 'luke'])
+
+        check = False
+        if expected1 in self.kb.facts and expected2 in self.kb.facts and expected3 in self.kb.facts:
+            check = True
+        self.assertTrue(check)
+
+        check = False
+        expected1 = Fact(['above', 'block1', 'block3'])
+        expected2 = Rule([['above', 'block2', '?z']], ['above', 'block1', '?z'])
+        expected3 = Rule([['above', 'block3', '?z']], ['above', 'block2', '?z'])
+        if expected1 in self.kb.facts and expected2 in self.kb.rules and expected3 in self.kb.rules:
+            check = True
+        self.assertTrue(check)
+
+
+        """ Add additional facts and rules to knowledgebase"""
         check = False
         self.kb.add(Fact(['isa', 'dave', 'human']))
         expected1 = Fact(['isa', 'dave', 'mortal'])
@@ -121,9 +140,9 @@ class MyTests(unittest.TestCase):
             check = True
         self.assertEqual(check, True)
 
-        print('EEEEEEE')
-        for e in self.kb.facts:
-            print(e)
+
+        #for e in self.kb.rules:
+            #print(e)
 
 
 if __name__ == '__main__':
