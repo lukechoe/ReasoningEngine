@@ -3,6 +3,8 @@ from parser import *
 import unittest
 from kb import *
 from util import classify
+from util import classify_suggestions
+from suggestions import *
 
 class MyTests(unittest.TestCase):
 
@@ -140,10 +142,13 @@ class MyTests(unittest.TestCase):
             check = True
         self.assertEqual(check, True)
 
-
-        #for e in self.kb.rules:
-            #print(e)
-
+    def test06(self):
+        self.sb = SuggestionBase()
+        file = "dataFiles/suggestions.txt"
+        #ensure that the txt file has each subgoal on a separate line
+        data = tokenize_suggestion_file(file)
+        classify_suggestions(self.sb, data)
+        # classify done... workon the logic of subgoals 
 
 if __name__ == '__main__':
     unittest.main()

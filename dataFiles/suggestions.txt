@@ -1,0 +1,11 @@
+(defSuggestion StrategyForCaloriesGreenCheese
+    (caloriesInCubicMeter ?obj ?cal)
+  :subgoals ((madeOf ?obj greencheese)
+             (caloriesPerKilogram greencheese ?cpk)
+             (densityOfGreenCheese ?dc))
+  :result-step (evaluate ?cal (TimesFn ?cpk ?dc)))
+
+  (defSuggestion CalorieStrategyForObject
+    (CaloriesIn ?obj ?count)
+  :subgoals ((volumeOfObject ?obj ?vol) (caloriesInCubicMeter ?obj ?cal))
+  :result-step (evaluate ?count (TimesFn ?vol ?cal)))

@@ -103,3 +103,58 @@ def one_liner(e):
         return True
     else:
         return False
+
+
+
+# Parse suggestions
+def tokenize_suggestion_file(file):
+    file = open(file, "r")
+    list_of_suggestions = []
+    single_suggestion = []
+    line = file.readline()
+    parts_of_suggestion = []
+    while line:
+
+        line = line.strip()
+        if line == '':
+            line = file.readline()
+            continue
+        if line[:9] == ':subgoals':
+            line = line[10:]
+
+            subgoal_lst = []
+            while line:
+                #print(line)
+                if line[:12] == ':result-step':
+                    break
+                line = line.replace('(', '')
+                line = line.replace(')', '')
+                elems = line.split()
+                subgoal_lst.append(elems)
+
+                line = file.readline()
+                line = line.strip()
+            parts_of_suggestion.append(subgoal_lst)
+            continue
+
+
+        if line[0] == '(':
+            line = line.replace('(', '')
+            elems = line.split()
+            parts_of_suggestion.append(elems)
+        if line[:12] == ":result-step":
+            line = line[13:]
+            line = line.replace('(', '')
+            line = line.replace(')', '')
+            elems = line.split()
+            parts_of_suggestion.append(elems)
+
+            list_of_suggestions.append(parts_of_suggestion)
+
+            parts_of_suggestion = []
+            single_suggestion = []
+
+        line = file.readline()
+
+    file.close()
+    return list_of_suggestions

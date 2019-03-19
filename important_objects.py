@@ -60,3 +60,17 @@ class Binding(object):
     def __repr__(self):
         s = "Binding:\n %s\n%s\n\n" % (self.vars, self.constants)
         return s
+
+# CLASSES USED FOR SUGGESTIONS (like FIRE)
+class Suggestion(object):
+    def __init__(self, data):
+        # assuming data is in 2D array format
+        self.name = data[0][1]
+        self.function_name = data[1][0]
+        self.function_param = data[1][1:]
+        self.tests = []
+        self.subgoals = data[2]
+        self.result_step = data[3][1:]
+    def __repr__(self):
+        s = "Suggestion:\n%s\n" % (self.name)
+        return s

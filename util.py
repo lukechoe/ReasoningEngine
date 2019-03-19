@@ -30,3 +30,11 @@ def classify(kb, data):
 
         else: # gonna be a fact
             kb.add(Fact(element))
+
+def classify_suggestions(sb, data):
+    if not data:
+        print("No data found")
+        return False
+    for suggestion in data:
+        s = Suggestion(suggestion)
+        sb.suggestions.append(s)
