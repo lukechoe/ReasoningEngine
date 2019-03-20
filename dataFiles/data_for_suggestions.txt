@@ -2,4 +2,5 @@
 (madeOf moon greencheese)
 (caloriesPerKilogram greencheese 4000)
 (radius moon 1737000)
-(densityOfGreenCheese 947) 
+(densityOfGreenCheese 947)
+(averageCalorieIntakeDaily 2870)

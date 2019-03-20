@@ -20,3 +20,12 @@
   (volumeOfObject ?obj ?vol)
     :subgoals ((radius ?obj ?radius))
     :result-step (evaluate ?vol (TimesFn 4.187 (TimesFn ?radius ?radius ?radius))))
+
+
+(defSuggestion StrategyForFeedingHumans
+  (DurationFeedHumans ?obj ?time)
+    :test (madeOf ?obj greencheese)
+    :subgoals ((averageCalorieIntakeDaily ?amt)
+               (CaloriesIn ?obj ?count)
+               (humanPopulation ?p))
+    :result-step (evaluate ?time (QuotientFn ?count (TimesFn ?amt ?p))))

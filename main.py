@@ -154,15 +154,49 @@ class MyTests(unittest.TestCase):
         data = tokenize_suggestion_file(file)
         classify_suggestions(self.sb, data)
 
+        original_suggestions = copy.deepcopy(self.sb)
+
         q = Question('question0', 'humanPopulation ?p', "what is the human population?")
         ans = self.sb.evaluate(q)
         self.assertEqual(float(ans), 7000000000.0)
 
+        self.sb = original_suggestions # restore original version of sb
         q = Question('question1', 'CaloriesIn moon ?count', 'How many calories in object?')
         ans = self.sb.evaluate(q)
         ans = float(ans)
         withinRange = False
         if ans > 1e25 and ans < 1e26:
+            withinRange = True
+        self.assertTrue(withinRange)
+
+        self.sb = original_suggestions # restore original version of sb
+        q = Question('question2', 'DurationFeedHumans moon ?time', "How long can the moon feed humans if it was made of green cheese?")
+        ans = self.sb.evaluate(q)
+        ans = float(ans)
+        withinRange = False
+        if ans > 1e12 and ans < 1e13:
+            withinRange = True
+
+        self.assertTrue(withinRange)
+
+    # in depth suggestion unit test
+    def test07(self):
+        self.kb = KnowledgeBase()
+        file = 'dataFiles/data_for_suggestions.txt'
+        data = tokenize_file(file)
+        classify(self.kb, data)
+
+        self.sb = SuggestionBase(self.kb)
+        file = "dataFiles/suggestions.txt"
+        #ensure that the txt file has each subgoal on a separate line
+        data = tokenize_suggestion_file(file)
+        classify_suggestions(self.sb, data)
+
+        q = Question('question2', 'DurationFeedHumans moon ?time', "How long can the moon feed humans if it was made of green cheese?")
+        ans = self.sb.evaluate(q)
+        ans = float(ans)
+        withinRange = False
+        if ans > 1e12 and ans < 1e13:
             withinRange = True
 
         self.assertTrue(withinRange)
