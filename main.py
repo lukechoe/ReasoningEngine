@@ -143,12 +143,30 @@ class MyTests(unittest.TestCase):
         self.assertEqual(check, True)
 
     def test06(self):
-        self.sb = SuggestionBase()
+        self.kb = KnowledgeBase()
+        file = 'dataFiles/data_for_suggestions.txt'
+        data = tokenize_file(file)
+        classify(self.kb, data)
+
+        self.sb = SuggestionBase(self.kb)
         file = "dataFiles/suggestions.txt"
         #ensure that the txt file has each subgoal on a separate line
         data = tokenize_suggestion_file(file)
         classify_suggestions(self.sb, data)
-        # classify done... workon the logic of subgoals 
+
+        q = Question('question0', 'humanPopulation ?p', "what is the human population?")
+        ans = self.sb.evaluate(q)
+        self.assertEqual(float(ans), 7000000000.0)
+
+        q = Question('question1', 'CaloriesIn moon ?count', 'How many calories in object?')
+        ans = self.sb.evaluate(q)
+        ans = float(ans)
+        withinRange = False
+        if ans > 1e25 and ans < 1e26:
+            withinRange = True
+
+        self.assertTrue(withinRange)
+
 
 if __name__ == '__main__':
     unittest.main()

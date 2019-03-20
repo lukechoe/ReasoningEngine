@@ -7,5 +7,16 @@
 
   (defSuggestion CalorieStrategyForObject
     (CaloriesIn ?obj ?count)
-  :subgoals ((volumeOfObject ?obj ?vol) (caloriesInCubicMeter ?obj ?cal))
+  :subgoals ((volumeOfObject ?obj ?vol)
+             (caloriesInCubicMeter ?obj ?cal))
   :result-step (evaluate ?count (TimesFn ?vol ?cal)))
+
+(defSuggestion getHumanPopulation
+  (humanPopulation ?p)
+    :subgoals ((valueOf ((QPQuantityFn numberOfGroupMembers) HumanPopulationPlanetEarth) ?pop))
+    :result-step (evaluate ?p ?pop))
+
+(defSuggestion VolumeFormulaForSphere
+  (volumeOfObject ?obj ?vol)
+    :subgoals ((radius ?obj ?radius))
+    :result-step (evaluate ?vol (TimesFn 4.187 (TimesFn ?radius ?radius ?radius))))

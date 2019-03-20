@@ -66,6 +66,7 @@ class Suggestion(object):
     def __init__(self, data):
         # assuming data is in 2D array format
         self.name = data[0][1]
+        self.function = data[1]
         self.function_name = data[1][0]
         self.function_param = data[1][1:]
         self.tests = []
@@ -73,4 +74,16 @@ class Suggestion(object):
         self.result_step = data[3][1:]
     def __repr__(self):
         s = "Suggestion:\n%s\n" % (self.name)
+        return s
+
+class Question(object):
+    def __init__(self, name, suggestion, question):
+        self.name = name
+        self.suggestion = suggestion
+        self.suggestion_list = suggestion.replace('(', '')
+        self.suggestion_list = suggestion.replace(')', '')
+        self.suggestion_list = suggestion.split()
+        self.question = question
+    def __repr__(self):
+        s = "Question:\n%s\n" % (self.name)
         return s

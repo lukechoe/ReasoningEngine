@@ -140,6 +140,7 @@ def tokenize_suggestion_file(file):
 
         if line[0] == '(':
             line = line.replace('(', '')
+            line = line.replace(')', '')
             elems = line.split()
             parts_of_suggestion.append(elems)
         if line[:12] == ":result-step":

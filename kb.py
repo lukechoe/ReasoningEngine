@@ -24,7 +24,6 @@ class KnowledgeBase(object):
 
         pred = statement[0]
         terms = statement[1:]
-
         for f in self.facts:
             lst_of_vars = []
             lst_of_const = []

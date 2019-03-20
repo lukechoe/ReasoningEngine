@@ -37,4 +37,4 @@ def classify_suggestions(sb, data):
         return False
     for suggestion in data:
         s = Suggestion(suggestion)
-        sb.suggestions.append(s)
+        sb.add(s)

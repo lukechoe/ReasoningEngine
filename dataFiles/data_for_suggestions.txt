@@ -1,0 +1,5 @@
+(valueOf ((QPQuantityFn numberOfGroupMembers) HumanPopulationPlanetEarth) 7000000000)
+(madeOf moon greencheese)
+(caloriesPerKilogram greencheese 4000)
+(radius moon 1737000)
+(densityOfGreenCheese 947) 
