@@ -94,7 +94,7 @@ class MyTests(unittest.TestCase):
 
 
     # This tests for inference functionality and
-    # justifications of each fact/rule
+    # antecedents of each fact/rule
     def test04(self):
         self.kb = KnowledgeBase()
         file = 'dataFiles/inDepthFactsRules.txt'
@@ -109,10 +109,10 @@ class MyTests(unittest.TestCase):
             shouldBeTrue = True
             index = self.kb.facts.index(f1)
         self.assertTrue(shouldBeTrue)
-        # check to see if the inferred fact (f1) has justifications
+        # check to see if the inferred fact (f1) has antecedents
         actual_fact = self.kb.facts[index]
-        j1 = actual_fact.justification[0].fact
-        j2 = actual_fact.justification[0].rule
+        j1 = actual_fact.antecedent[0].fact
+        j2 = actual_fact.antecedent[0].rule
         shouldBeTrue = False
         f = Fact(['ON', 'D', 'TABLE'])
         r = Rule([['ON', '?x', 'TABLE']], ['isa', '?x', 'bottomBlock'])
@@ -121,9 +121,9 @@ class MyTests(unittest.TestCase):
             shouldBeTrue = True
         self.assertTrue(shouldBeTrue)
 
-        # check to see if the justifications support the given fact (f1)
-        support1 = j1.supports[1]
-        support2 = j2.supports[0]
+        # check to see if the antecedents support the given fact (f1)
+        support1 = j1.consequent[1]
+        support2 = j2.consequent[0]
         shouldBeTrue = False
         #both support1 and support2 should point to the original inferred fact (ON D TABLE)
         if f1 == support1 and f1 == support2:
@@ -140,7 +140,7 @@ class MyTests(unittest.TestCase):
         # (rule (ON ?y D)
         #   (rule (ON ?z ?y))
         #     (assert! '(3-Tower D ,?y ,?z)))
-        support3 = j1.supports[0]
+        support3 = j1.consequent[0]
         r = Rule([['ON', '?y', 'D'], ['ON', '?z', '?y']], ['3-Tower', 'D', '?y', '?z'])
 
 
@@ -287,6 +287,34 @@ class MyTests(unittest.TestCase):
         if ans > 1e12 and ans < 1e13:
             withinRange = True
         self.assertTrue(withinRange)
+
+    # do it yourself (diy) unit test
+    def test08(self):
+        self.kb = KnowledgeBase()
+        file = 'dataFiles/diy_kb.txt'
+        data = tokenize_file(file)
+        classify(self.kb, data)
+
+        print("No data found because of test08, (txt files empty)")
+        # test/print inference engine nodes here
+        """
+        for f in self.kb.facts:
+            print(f)
+        for r in self.kb.rules:
+            print(r)
+        """
+
+        self.sb = SuggestionBase(self.kb)
+        file = "dataFiles/diy_suggestions.txt"
+        #ensure that the txt file has each subgoal on a separate line
+        data = tokenize_suggestion_file(file)
+        classify_suggestions(self.sb, data)
+
+        # ask question here
+        q = Question('question1', 'Insert question here', "Insert question (text version) here?")
+        ans = self.sb.evaluate(q)
+        #print(ans)
+
 
 if __name__ == '__main__':
     unittest.main()

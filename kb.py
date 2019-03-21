@@ -95,12 +95,12 @@ class KnowledgeBase(object):
                         continue
                     new_assert = self.update_rest_of_rule(rule.asserted, b)
 
-                    justification = Justification(statement, rule)
+                    antecedent = Antecedent(statement, rule)
                     new_assert = Fact(new_assert)
-                    new_assert.justification.append(justification)
+                    new_assert.antecedent.append(antecedent)
 
-                    statement.supports.append(new_assert)
-                    rule.supports.append(new_assert)
+                    statement.consequent.append(new_assert)
+                    rule.consequent.append(new_assert)
 
                     self.facts.append(new_assert)
                     self.make_inferences(new_assert)
@@ -114,11 +114,11 @@ class KnowledgeBase(object):
                     # update rule then give it forward and backward supporting facts/rules
                     new_rule = self.update_rest_of_rule(rule, b)
 
-                    justification = Justification(statement, rule)
-                    new_rule.justification.append(justification)
+                    antecedent = Antecedent(statement, rule)
+                    new_rule.antecedent.append(antecedent)
 
-                    statement.supports.append(new_rule)
-                    rule.supports.append(new_rule)
+                    statement.consequent.append(new_rule)
+                    rule.consequent.append(new_rule)
 
                     self.rules.append(new_rule)
                     self.make_inferences(new_rule)
@@ -144,9 +144,9 @@ class KnowledgeBase(object):
                         continue
 
                     new_assert = self.update_rest_of_rule(statement.asserted, b)
-                    justification = Justification(f, statement)
+                    antecedent = Antecedent(f, statement)
                     new_assert = Fact(new_assert)
-                    new_assert.justification.append(justification)
+                    new_assert.antecedent.append(antecedent)
                     self.facts.append(new_assert)
                     self.make_inferences(new_assert)
 
@@ -155,8 +155,8 @@ class KnowledgeBase(object):
                     if b == False:
                         continue
                     new_rule = self.update_rest_of_rule(statement, b)
-                    justification = Justification(f, statement)
-                    new_rule.justification.append(justification)
+                    antecedent = Antecedent(f, statement)
+                    new_rule.antecedent.append(antecedent)
                     self.rules.append(new_rule)
                     self.make_inferences(new_rule)
             return

@@ -6,8 +6,8 @@ class Fact(object):
         self.predicate = data[0]
         self.terms = data[1:]
 
-        self.justification = []
-        self.supports = []
+        self.antecedent = []
+        self.consequent = []
 
     def __eq__(self, next):
         return self.predicate == next.predicate and self.terms == next.terms and isinstance(next, Fact)
@@ -33,8 +33,8 @@ class Rule(object):
         self.vars = [item[1:] for item in self.rule_list]
         self.asserted = asserted
 
-        self.justification = []
-        self.supports = []
+        self.antecedent = []
+        self.consequent = []
 
     def __eq__(self, next):
         return isinstance(next, Rule) and self.predicate == next.predicate and self.vars == next.vars and self.asserted == next.asserted
@@ -43,9 +43,9 @@ class Rule(object):
         return s
 
 # Justification is a pair of fact and rule that support another fact or rule
-class Justification(object):
+class Antecedent(object):
     def __init__(self, f, r):
-        super(Justification, self).__init__()
+        super(Antecedent, self).__init__()
         self.fact = f
         self.rule = r
 
