@@ -55,25 +55,6 @@ class KnowledgeBase(object):
             return False
         return binding_lst
 
-    # this returns a LIST OF BINDINGS if there exists a fact that satisfies a FULL rule
-    # Input: (on block1 table) ==> returns (?X, Block1) assuming there is the rule: (rule (on ?X table) (assert! ... ))
-    def reverse_ask(self, statement):
-        binding_lst = []
-
-        statement = statement.strip().replace("(","").replace(")","")
-        elements = statement.split()
-
-        pred = elements[0]
-        terms = elements[1:]
-
-
-        #for r in self.rules:
-            #for i in range(len(r.predicate)):
-                # this is why i should've organized the objects...
-                # now i gotta iterate through the list of predicates AND vars... -_-
-                #if r.predicate[i] == pred:
-                #    print(pred, '000')
-            #print('break;')
 
     # add and infer new facts/rules ... uses "ask()" and "helper()"
     def add(self, statement):
@@ -100,37 +81,45 @@ class KnowledgeBase(object):
             self.make_inferences(statement)
 
 
-    # use "in" and "out"
+    # recursive function that is the bulk of the inferencing logic
     def make_inferences(self, statement):
         # list of bindings below..
         bindings = []
         if isinstance(statement, Fact):
             if statement in self.facts:
-                #print("already there.. fix it")
                 pass
             for rule in self.rules:
-                #print(rule, '--\n', statement, '=============\n')
                 if len(rule.predicate) == 1 and rule.predicate[0] == statement.predicate:
                     b = self.find_bindings(statement, rule)
                     if b == False:
                         continue
                     new_assert = self.update_rest_of_rule(rule.asserted, b)
-                    justification = Justification(statement, rule)
-                    new_assert = Fact(new_assert, justification)
-                    #self.add(new_assert)
-                    self.facts.append(new_assert)
-                    #print("asserted", new_assert, '--------\n')
-                    self.make_inferences(new_assert)
-                    # todo check back_support and implement forward support
 
-                # more than one predicate...todo
+                    justification = Justification(statement, rule)
+                    new_assert = Fact(new_assert)
+                    new_assert.justification.append(justification)
+
+                    statement.supports.append(new_assert)
+                    rule.supports.append(new_assert)
+
+                    self.facts.append(new_assert)
+                    self.make_inferences(new_assert)
+
+
                 elif len(rule.predicate) > 1 and rule.predicate[0] == statement.predicate:
                     b = self.find_bindings(statement, rule)
                     if b == False:
                         continue
+
+                    # update rule then give it forward and backward supporting facts/rules
                     new_rule = self.update_rest_of_rule(rule, b)
+
                     justification = Justification(statement, rule)
-                    new_rule.justification = justification
+                    new_rule.justification.append(justification)
+
+                    statement.supports.append(new_rule)
+                    rule.supports.append(new_rule)
+
                     self.rules.append(new_rule)
                     self.make_inferences(new_rule)
             return
@@ -148,7 +137,6 @@ class KnowledgeBase(object):
             """
 
             check = False # if this is true by the end of the for loop, then we found a match
-            #print(statement)
             for f in self.facts:
                 if len(statement.predicate) == 1 and statement.predicate[0] == f.predicate:
                     b = self.find_bindings(f, statement)
@@ -157,7 +145,8 @@ class KnowledgeBase(object):
 
                     new_assert = self.update_rest_of_rule(statement.asserted, b)
                     justification = Justification(f, statement)
-                    new_assert = Fact(new_assert, justification)
+                    new_assert = Fact(new_assert)
+                    new_assert.justification.append(justification)
                     self.facts.append(new_assert)
                     self.make_inferences(new_assert)
 
@@ -167,7 +156,7 @@ class KnowledgeBase(object):
                         continue
                     new_rule = self.update_rest_of_rule(statement, b)
                     justification = Justification(f, statement)
-                    new_rule.justification = justification
+                    new_rule.justification.append(justification)
                     self.rules.append(new_rule)
                     self.make_inferences(new_rule)
             return
@@ -194,7 +183,6 @@ class KnowledgeBase(object):
     # takes the rest of a rule (could have more predicates and vars,
     # or it could just be the asserted)
     def update_rest_of_rule(self, rest_of_rule, binding):
-
         # this assumes the left hand side of a rule has more than one predicate
         # therefore, it takes the rest of the rule, and returns a new rule
         if isinstance(rest_of_rule, Rule):
@@ -212,17 +200,13 @@ class KnowledgeBase(object):
                 for j in range(len(rest_of_rule.asserted)):
                     if new_rule.asserted[j] == binding.vars[i]:
                         new_rule.asserted[j] = binding.constants[i]
-
             return new_rule
         # this assumes the left hand side of a rule has only one predicate. and returns a new fact
         else:
-            # WHY DOES PYTHON COPY THE REFERENCE TO THE LIST INSTEAD OF CREATING A NEW LIST!???
+            # Soooo python defaults to pass by reference.. -_- ... this took forever
             new_rule = rest_of_rule.copy()
             for i in range(len(binding.vars)):
                 for j in range(len(new_rule)):
                     if new_rule[j] == binding.vars[i]:
                         new_rule[j] = binding.constants[i]
         return new_rule
-
-    def make_retractions(self, statement):
-        pass

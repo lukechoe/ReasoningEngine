@@ -1,21 +1,18 @@
-
-
 class Fact(object):
-    def __init__(self, data, justification=[], label="IN"):
+    def __init__(self, data, label="IN"):
         super(Fact, self).__init__()
         self.id = "Fact"
         self.label = label
         self.predicate = data[0]
         self.terms = data[1:]
 
-        self.justification = justification
+        self.justification = []
         self.supports = []
 
     def __eq__(self, next):
         return self.predicate == next.predicate and self.terms == next.terms and isinstance(next, Fact)
 
     def __repr__(self):
-        #s = "Fact: %s\n %s\n\n %s\n" % (self.label, self.predicate, self.terms)
         lst = []
         for e in self.terms:
             lst.append(e)
@@ -36,8 +33,8 @@ class Rule(object):
         self.vars = [item[1:] for item in self.rule_list]
         self.asserted = asserted
 
-        self.back_support = back_support
-        self.forward_support = []
+        self.justification = []
+        self.supports = []
 
     def __eq__(self, next):
         return isinstance(next, Rule) and self.predicate == next.predicate and self.vars == next.vars and self.asserted == next.asserted
@@ -61,7 +58,7 @@ class Binding(object):
         s = "Binding:\n %s\n%s\n\n" % (self.vars, self.constants)
         return s
 
-# CLASSES USED FOR SUGGESTIONS (like FIRE)
+# CLASS USED FOR SUGGESTIONS (like FIRE)
 class Suggestion(object):
     def __init__(self, data):
         # assuming data is in 2D array format
@@ -76,6 +73,7 @@ class Suggestion(object):
         s = "Suggestion:\n%s\n" % (self.name)
         return s
 
+# The object that a user would give as input
 class Question(object):
     def __init__(self, name, suggestion, question):
         self.name = name

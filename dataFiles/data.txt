@@ -17,7 +17,7 @@ Rectangular3DShape)
     (rule (ON ?z ?y) (assert! '(3-Tower ,?x ,?y ,?z)))))
 
 (rule (ON ?x TABLE)
-  (assert! '(isa ?x testing)))
+  (assert! '(isa ?x object)))
 
 (ON D TABLE)
 (ON E D)

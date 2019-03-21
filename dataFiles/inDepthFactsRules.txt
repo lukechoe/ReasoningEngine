@@ -1,0 +1,21 @@
+(rule (ON ?x TABLE)
+  (rule (ON ?y ?x)
+    (rule (ON ?z ?y) (assert! '(3-Tower ,?x ,?y ,?z)))))
+
+(rule (ON ?x TABLE)
+  (assert! '(isa ?x bottomBlock)))
+
+(ON D TABLE)
+(ON C D)
+(ON B C)
+(ON A B)
+
+
+
+(rule (ON ?x ?y)
+  (rule (ON ?y ?z)
+    (assert! '(thereIsOneBlockBetween ?x ?z))))
+
+(rule (thereIsOneBlockBetween ?x ?y)
+  (rule (thereIsOneBlockBetween ?y ?z))
+    (assert! '(thereAreThreeBlocksBetween ?x ?z)))

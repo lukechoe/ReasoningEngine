@@ -8,6 +8,7 @@ class SuggestionBase(object):
         self.suggestions = []
         self.kb = kb
         self.original_suggestions = None
+        self.eval = []
 
     def __repr__(self):
         return 'SuggestionBase {!r}'.format(self.suggestions)
@@ -18,10 +19,10 @@ class SuggestionBase(object):
         else:
             print("Not a suggestion, try again.")
 
+
+    # Evaluate() and evaluate_helper() take in a question similar to a question
+    # one would ask FIRE, and then return the evaluated result-step
     def evaluate(self, question):
-
-
-
         if not isinstance(question, Question):
             print("Invalid input (suggestion)")
             return
@@ -33,6 +34,9 @@ class SuggestionBase(object):
             print("suggestion not found")
             return
 
+        # replace any bindings that have been set.
+        # e.g. if ?obj was replaced with moon, all other ?obj will be replaced
+        # with moon
         for i in range(len(s.function)):
             if s.function[i] != question.suggestion_list[i]:
                 self.update_suggestion(s, s.function[i], question.suggestion_list[i])
@@ -52,8 +56,6 @@ class SuggestionBase(object):
                     if ask1 not in result_bindings:
                         factCheck = True
                         result_bindings.append(ask1[0])
-                        #self.update_suggestion(s, ask1[0].vars[0], ask1[0].constants[0])
-                        #print(ask1[0].vars[0], "::::::::", ask1[0].constants[0])
                     break
             # if not, then look through suggestions recursively
             for suggestion in self.suggestions:
@@ -62,7 +64,6 @@ class SuggestionBase(object):
         # evaluate result-step, then go back to previous suggestion and update var
         evaluated = s.result_step[0]
         terms = s.result_step[1:]
-        #simple, no calculations needed
 
         if len(terms) == 1:
             if terms[0][0] != '?':
@@ -74,19 +75,17 @@ class SuggestionBase(object):
                 self.update_suggestion(s, evaluated, str(c))
                 if prev_s != None:
                     self.update_suggestion(prev_s, evaluated, str(c))
+
         else:
             ans = 1
             calculations = []
-            #print(terms, '0------')
             for i in range(len(terms)-1, -1, -1):
-
                 if terms[i] == 'TimesFn':
                     total = ans
                     for num in calculations:
                         total = total * num
                     ans = total
                     calculations = []
-
                 elif terms[i] == 'QuotientFn':
                     pass
                 elif terms[i][0] == '?':
@@ -94,18 +93,18 @@ class SuggestionBase(object):
                     calculations.append(float(c))
                 else:
                     calculations.append(float(terms[i]))
-            # take answer and update previous suggestion's var in result-step
-            # ans now has the evaluated
-            #b = Binding(evaluated, ans)
 
+        # For unit testing, keep track of the evaluations made
+        self.eval.append(s.result_step)
+
+        # we're at least one level from the root suggestion, evaluate then
+        # move up to parent node
         if prev_s != None and len(terms) > 1:
             self.update_suggestion(s, evaluated, str(ans))
             self.update_suggestion(prev_s, evaluated, str(ans))
-            #print(prev_s.result_step, '\n\n')
-            #print(s.result_step)
+
         # we're at the beginning again.. evaluate the final result
         else:
-
             for e in result_bindings:
                 self.update_suggestion(s, e.vars[0], e.constants[0])
 
@@ -120,7 +119,7 @@ class SuggestionBase(object):
                 ans = 1
                 calculations = []
                 for i in range(len(terms)-1, -1, -1):
-                    print(terms[i])
+                    #print(terms[i])
                     if terms[i] == 'TimesFn':
                         total = ans
                         for num in calculations:
@@ -128,7 +127,10 @@ class SuggestionBase(object):
                         ans = total
                         calculations = []
                     elif terms[i] == 'QuotientFn':
-                        pass
+                        if calculations:
+                            ans = calculations[0] / ans
+                        else:
+                            print("Incorrect formatting of quotientfn")
                     elif terms[i][0] == '?':
                         pass
                     #    print("Shouldn't have variables at the end state, debug")
